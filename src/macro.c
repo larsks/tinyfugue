@@ -830,6 +830,7 @@ static int complete_macro(Macro *spec, unsigned int hash, int num,
 {
     Macro *orig = NULL;
     int i;
+    int captures, n;
 
     if (spec->name && *spec->name) {
         if (strchr("#@!/", *spec->name) || strchr(spec->name, ' ')) {
@@ -893,7 +894,7 @@ static int complete_macro(Macro *spec, unsigned int hash, int num,
     }
     spec->attr &= ~F_NONE;
     if (spec->nsubattr) {
-	int n = pcre_info(spec->trig.ri->re, NULL, NULL);
+	n = pcre_fullinfo(spec->trig.ri->re, NULL, PCRE_INFO_CAPTURECOUNT, &captures);
 	for (i = 0; i < spec->nsubattr; i++) {
 	    spec->subattr[i].attr &= ~F_NONE;
 	    if (spec->subattr[i].subexp > n) {

@@ -121,6 +121,7 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     int eoffset, n;
     /* PCRE_DOTALL optimizes patterns starting with ".*" */
     int options = PCRE_DOLLAR_ENDONLY | PCRE_DOTALL | PCRE_CASELESS;
+    int captures;
 
     ri = dmalloc(NULL, sizeof(RegInfo), file, line);
     if (!ri) return NULL;
@@ -151,9 +152,9 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
 	    emsg ? emsg : "unknown error");
 	goto tf_reg_compile_error;
     }
-    n = pcre_info(ri->re, NULL, NULL);
+    n = pcre_fullinfo(ri->re, NULL, PCRE_INFO_CAPTURECOUNT, &captures);
     if (n < 0) goto tf_reg_compile_error;
-    ri->ovecsize = 3 * (n + 1);
+    ri->ovecsize = 3 * (captures + 1);
     ri->ovector = dmalloc(NULL, sizeof(int) * ri->ovecsize, file, line);
     if (!ri->ovector) goto tf_reg_compile_error;
     if (optimize) {
